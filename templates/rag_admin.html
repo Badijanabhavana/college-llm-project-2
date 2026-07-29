@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Knowledge Manager — JNTU-GV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #21262d;
+      --border:    #30363d;
+      --accent:    #7c3aed;
+      --accent-g:  linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      --green:     #22c55e;
+      --red:       #ef4444;
+      --yellow:    #f59e0b;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --radius:    12px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: var(--accent-g);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .topbar-sep { color: var(--border); }
+    .topbar-title { font-size: 0.95rem; color: var(--muted); font-weight: 500; }
+    .topbar-spacer { flex: 1; }
+    .topbar-nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .topbar-nav a:hover { background: var(--surface2); color: var(--text); }
+
+    /* ── Layout ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .page-header h1 span {
+      background: var(--accent-g);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-header p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      flex: 1;
+      min-width: 140px;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--accent); }
+    .stat-card .stat-val {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: var(--accent-g);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-card .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ── Grid ── */
+    .grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 1.5rem; align-items: start; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+    /* ── Panel ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .panel-header h2 { font-size: 1rem; font-weight: 600; }
+    .panel-header .badge {
+      background: var(--surface2);
+      color: var(--muted);
+      border-radius: 20px;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.75rem;
+      border: 1px solid var(--border);
+    }
+    .panel-body { padding: 1.5rem; }
+
+    /* ── Form ── */
+    .form-group { margin-bottom: 1.2rem; }
+    label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--muted); margin-bottom: 0.4rem; }
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.65rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      resize: vertical;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+    textarea { min-height: 120px; line-height: 1.5; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--accent-g);
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(124,58,237,0.35); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-danger {
+      background: rgba(239,68,68,0.12);
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,0.25);
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+    .btn[disabled] { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+    /* ── Search bar ── */
+    .search-wrap { position: relative; margin-bottom: 1rem; }
+    .search-wrap input {
+      padding-left: 2.4rem;
+    }
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    /* ── Doc list ── */
+    #doc-list { display: flex; flex-direction: column; gap: 0.6rem; max-height: 600px; overflow-y: auto; }
+    #doc-list::-webkit-scrollbar { width: 4px; }
+    #doc-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .doc-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      transition: border-color 0.2s, transform 0.15s;
+      animation: slideIn 0.25s ease both;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .doc-item:hover { border-color: var(--accent); transform: translateX(2px); }
+    .doc-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(79,70,229,0.25));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+    }
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-title { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .doc-preview { font-size: 0.78rem; color: var(--muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .doc-meta { font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+    .doc-source {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .doc-source.seed { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+    .doc-source.admin_ui { background: rgba(124,58,237,0.12); color: #a78bfa; border: 1px solid rgba(124,58,237,0.25); }
+    .doc-source.admin { background: rgba(245,158,11,0.12); color: var(--yellow); border: 1px solid rgba(245,158,11,0.25); }
+    .del-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .del-btn:hover { color: var(--red); background: rgba(239,68,68,0.1); }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 0.75rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      z-index: 999;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.35); color: var(--green); }
+    #toast.error   { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.35); color: var(--red); }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 2rem; color: var(--muted); }
+    .empty-state .emoji { font-size: 2rem; margin-bottom: 0.5rem; }
+    .empty-state p { font-size: 0.875rem; }
+
+    /* ── Loading spinner ── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RAG flow diagram ── */
+    .flow-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .flow-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .flow-steps { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .flow-step {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.78rem;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .flow-arrow { color: var(--muted); font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<nav class="topbar">
+  <span class="topbar-brand">🎓 JNTU-GV</span>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-title">RAG Knowledge Manager</span>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-nav">
+    <a href="/home">🏠 Home</a>
+    <a href="/unanswered">⚠️ Unanswered</a>
+    <a href="/chat_history">💬 Chats</a>
+    <a href="/logout">🚪 Logout</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>🧠 <span>RAG Knowledge Base</span></h1>
+    <p>Manage the documents retrieved by the AI to answer student queries. Add new facts, remove outdated ones — changes take effect immediately.</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-val" id="stat-total">—</div>
+      <div class="stat-label">Total Documents</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-seed">—</div>
+      <div class="stat-label">Seed Documents</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-custom">—</div>
+      <div class="stat-label">Custom Added</div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid">
+
+    <!-- Left: Add form -->
+    <div>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>➕ Add Knowledge Chunk</h2>
+        </div>
+        <div class="panel-body">
+          <form id="add-form" onsubmit="addDocument(event)">
+            <div class="form-group">
+              <label for="inp-title">Title / Topic</label>
+              <input id="inp-title" type="text" placeholder="e.g. New Scholarship Scheme 2026" required />
+            </div>
+            <div class="form-group">
+              <label for="inp-content">Content</label>
+              <textarea id="inp-content" placeholder="Enter the knowledge chunk — facts, details, links, etc." required></textarea>
+            </div>
+            <button id="add-btn" type="submit" class="btn btn-primary" style="width:100%;">
+              <span>Add to Knowledge Base</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- RAG Flow diagram -->
+      <div class="flow-card">
+        <h3>⚙️ How RAG Works</h3>
+        <div class="flow-steps">
+          <div class="flow-step">📝 User Query</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">🔍 Embedding</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">📦 FAISS Search</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">📄 Top-4 Chunks</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">🤖 LLM Answer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Document list -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2>📚 Knowledge Documents</h2>
+        <span class="badge" id="doc-count-badge">loading…</span>
+      </div>
+      <div class="panel-body">
+        <div class="search-wrap">
+          <span class="search-icon">🔎</span>
+          <input type="text" id="search-input" placeholder="Filter documents…" oninput="filterDocs()" />
+        </div>
+        <div id="doc-list">
+          <div class="empty-state">
+            <div class="emoji">⏳</div>
+            <p>Loading documents…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+
+</div><!-- /container -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  let allDocs = [];
+
+  async function loadDocuments() {
+    try {
+      const res = await fetch('/api/rag/documents');
+      allDocs = await res.json();
+      renderDocs(allDocs);
+      updateStats(allDocs);
+    } catch (e) {
+      showToast('Failed to load documents.', 'error');
+    }
+  }
+
+  function updateStats(docs) {
+    document.getElementById('stat-total').textContent  = docs.length;
+    document.getElementById('stat-seed').textContent   = docs.filter(d => d.source === 'seed').length;
+    document.getElementById('stat-custom').textContent = docs.filter(d => d.source !== 'seed').length;
+    document.getElementById('doc-count-badge').textContent = docs.length + ' docs';
+  }
+
+  function renderDocs(docs) {
+    const list = document.getElementById('doc-list');
+    if (!docs.length) {
+      list.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>No documents found.</p></div>`;
+      return;
+    }
+    list.innerHTML = docs.map((doc, idx) => `
+      <div class="doc-item" id="doc-item-${idx}">
+        <div class="doc-icon">📄</div>
+        <div class="doc-info">
+          <div class="doc-title">${escHtml(doc.title)}</div>
+          <div class="doc-preview">${escHtml(doc.content)}</div>
+          <div class="doc-meta">
+            <span class="doc-source ${doc.source || 'seed'}">${doc.source || 'seed'}</span>
+            ${doc.added_by ? `&nbsp;·&nbsp; by ${escHtml(doc.added_by)}` : ''}
+          </div>
+        </div>
+        <button class="del-btn" onclick="deleteDocument(${idx})" title="Delete this document">🗑</button>
+      </div>
+    `).join('');
+  }
+
+  function filterDocs() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const filtered = allDocs.filter(d =>
+      d.title.toLowerCase().includes(q) || d.content.toLowerCase().includes(q)
+    );
+    renderDocs(filtered);
+  }
+
+  async function addDocument(e) {
+    e.preventDefault();
+    const btn = document.getElementById('add-btn');
+    const title   = document.getElementById('inp-title').value.trim();
+    const content = document.getElementById('inp-content').value.trim();
+    if (!title || !content) return;
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span> Adding…`;
+
+    try {
+      const res = await fetch('/api/rag/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast('✅ Document added successfully!', 'success');
+        document.getElementById('inp-title').value   = '';
+        document.getElementById('inp-content').value = '';
+        await loadDocuments();
+      } else {
+        showToast('❌ ' + (data.error || 'Failed to add.'), 'error');
+      }
+    } catch (err) {
+      showToast('❌ Network error.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<span>Add to Knowledge Base</span>`;
+    }
+  }
+
+  async function deleteDocument(idx) {
+    if (!confirm(`Delete document #${idx}? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/api/rag/delete/${idx}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast('🗑️ Document deleted.', 'success');
+        await loadDocuments();
+      } else {
+        showToast('❌ ' + (data.error || 'Delete failed.'), 'error');
+      }
+    } catch (err) {
+      showToast('❌ Network error.', 'error');
+    }
+  }
+
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `show ${type}`;
+    setTimeout(() => { t.className = ''; }, 3500);
+  }
+
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  loadDocuments();
+</script>
+</body>
+</html>

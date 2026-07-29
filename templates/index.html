@@ -1,0 +1,561 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Enquiry System | JNTU-GV</title>
+    <link rel="stylesheet" href="/static/student.css">
+</head>
+
+<body>
+    <!-- Dashboard Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box">
+                <span class="logo-icon">🤖</span>
+                <span class="logo-text">Enquiry Bot</span>
+            </div>
+            <button class="toggle-btn" id="toggleSidebar">☰</button>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="/home" class="menu-item active">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Home</span>
+            </a>
+            {% if is_admin %}
+            <a href="/admin" class="menu-item">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Admin Dashboard</span>
+            </a>
+            {% endif %}
+            <a href="/home#chat" class="menu-item">
+                <span class="menu-icon">🤖</span>
+                <span class="menu-text">Ask to Enquiry Bot</span>
+            </a>
+            <a href="/feedback" class="menu-item">
+                <span class="menu-icon">✍️</span>
+                <span class="menu-text">Give Feedback</span>
+            </a>
+            <a href="/records" class="menu-item">
+                <span class="menu-icon">📋</span>
+                <span class="menu-text">Feedback Record</span>
+            </a>
+            <a href="/chat_history" class="menu-item">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Chat History</span>
+            </a>
+            <a href="/logout" class="menu-item" style="margin-top: auto;">
+                <span class="menu-icon">🚪</span>
+                <span class="menu-text">Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Dashboard Layout -->
+    <main class="main-container">
+
+        <!-- Top Navigation -->
+        <nav class="main-nav">
+            <div class="logo">
+                <span style="font-size: 1.2rem;">🎓</span>
+                JNTU-GV
+            </div>
+            <div class="user-info">
+                {% if current_user %}
+                <span style="color: var(--text-muted); font-weight: 500;">Welcome, {{ current_user }}</span>
+                {% endif %}
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header id="home">
+            <span class="badge">🎓 JNTU-GV Official Enquiry System</span>
+            <h1>Ask Anything About<br><span style="color: var(--primary-dark); font-size: 0.72em; letter-spacing: -0.5px;">JNTU-GV College of Engineering, Vizianagaram</span></h1>
+            <p>AI-powered enquiry system providing instant, accurate answers about JNTU-GV's courses,
+                admissions, and campus life.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="#chat" class="btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem;"
+                    onclick="setTimeout(() => document.getElementById('user-input').focus(), 500)">Start Chatting</a>
+            </div>
+        </header>
+
+        <!-- Feature Cards Section -->
+        <section class="features-section" id="departments">
+            <h2 class="section-title">Everything You Need to Know</h2>
+            <div class="features-grid">
+                <div class="feature-card" style="cursor: pointer;" onclick="toggleCard(this)">
+                    <div class="feature-icon">🎓</div>
+                    <h3>Admissions</h3>
+                    <p>Simple step-by-step admission process with clear eligibility criteria and transparent guidelines.</p>
+                    <a href="/admissions" class="card-explore-btn">Explore →</a>
+                </div>
+                <div class="feature-card" style="cursor: pointer;" onclick="toggleCard(this)">
+                    <div class="feature-icon">🏛️</div>
+                    <h3>Departments</h3>
+                    <p>Well-structured academic departments with experienced faculty, modern curriculum, and hands-on learning approaches.</p>
+                    <a href="/departments" class="card-explore-btn">Explore →</a>
+                </div>
+                <div class="feature-card" style="cursor: pointer;" onclick="toggleCard(this)">
+                    <div class="feature-icon">💼</div>
+                    <h3>Placements</h3>
+                    <p>Strong placement support with top recruiters, skill development programs, and excellent career opportunities for students.</p>
+                    <a href="/placements" class="card-explore-btn">Explore →</a>
+                </div>
+                <div class="feature-card" style="cursor: pointer;" onclick="toggleCard(this)">
+                    <div class="feature-icon">🏫</div>
+                    <h3>Campus Life</h3>
+                    <p>Vibrant clubs, exciting events, state-of-the-art facilities and diverse student activities.</p>
+                    <a href="/campus" class="card-explore-btn">Explore →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chatbot Section -->
+        <section class="chat-section" id="chat" style="padding-top: 3rem;">
+            <h2 class="section-title" style="margin-bottom: 2rem;">Experience the <span class="highlight-text">Enquiry Bot</span></h2>
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="bot-avatar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2A8 8 0 0 0 4 10V14A4 4 0 0 0 8 18H16A4 4 0 0 0 20 14V10A8 8 0 0 0 12 2Z"
+                                stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M8 10V10.01M16 10V10.01" stroke="white" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M12 14C10 14 9 13 9 13M12 14C14 14 15 13 15 13" stroke="white" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <div class="chat-header-info">
+                        <h3>JNTU-GV Bot</h3>
+                        <p><span class="online-dot"></span> Online &amp; Ready</p>
+                    </div>
+                    <!-- Header action buttons -->
+                    <div class="chat-header-actions">
+                        <!-- New Chat -->
+                        <button class="chat-header-btn" id="new-chat-btn" title="New Chat">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                        </button>
+                        <!-- Expand / Collapse -->
+                        <button class="chat-header-btn" id="expand-btn" title="Expand Chat">
+                            <svg id="expand-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>
+                            </svg>
+                            <svg id="collapse-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="display:none">
+                                <path d="M8 3v5H3M21 8h-5V3M3 16h5v5M16 21v-5h5"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-box" id="chat-box">
+                    <div class="message-wrapper bot-wrapper">
+                        <div class="message bot-message">
+                            Hello there! 👋 I'm the JNTU-GV Enquiry Bot. <br><br>
+                            How can I assist you today? Try asking me about our <strong>courses</strong>,
+                            <strong>fees</strong>, <strong>admission process</strong>, or <strong>placements</strong>.
+                        </div>
+                    </div>
+
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator" id="typing-indicator">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <input type="text" id="user-input" placeholder="Ask about fees, courses, exams..."
+                        onkeypress="handleKeyPress(event)" autocomplete="off">
+                    <button class="mic-btn" id="mic-btn" type="button" title="Voice Input">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                        </svg>
+                    </button>
+                    <button class="send-btn" onclick="sendMessage()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <footer id="contact">
+            <div class="footer-logo">JNTU-GV</div>
+            <p>&copy; 2026 JNTU-GV College of Engineering | Automated College Enquiry System. All rights reserved.</p>
+        </footer>
+
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Sidebar Toggle Logic
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleSidebar');
+
+        toggleBtn.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('mobile-active');
+            } else {
+                sidebar.classList.toggle('collapsed');
+            }
+        });
+
+        // Close sidebar on mobile when clicking a menu item
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('mobile-active');
+                }
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        async function loadChatHistory() {
+            try {
+                const res = await fetch('/api/my_chat_history');
+                if (res.status === 200) {
+                    const chats = await res.json();
+                    const typingIndicator = document.getElementById("typing-indicator");
+                    chats.forEach(c => {
+                        const userHtml = `
+                            <div class="message-wrapper user-wrapper">
+                                <div class="message user-message">${c.user_msg}</div>
+                            </div>`;
+                        $(userHtml).insertBefore(typingIndicator);
+                        const botHtml = `
+                            <div class="message-wrapper bot-wrapper">
+                                <div class="message bot-message">${c.bot_response}</div>
+                            </div>`;
+                        $(botHtml).insertBefore(typingIndicator);
+                    });
+                    scrollToBottom();
+                }
+            } catch (e) {
+                console.error("Error loading chat history:", e);
+            }
+        }
+
+        window.onload = function () {
+            loadChatHistory();
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('query');
+            if (query) {
+                setTimeout(() => sendQuickMessage("Tell me about " + query), 600);
+            }
+        };
+
+        function sendQuickMessage(msg) {
+            document.getElementById('chat').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(function () {
+                var input = document.getElementById('user-input');
+                input.value = msg;
+                sendMessage();
+            }, 400);
+        }
+
+        function toggleCard(el) {
+            const allCards = document.querySelectorAll('.feature-card');
+            allCards.forEach(function(card) {
+                if (card !== el) card.classList.remove('clicked');
+            });
+            el.classList.toggle('clicked');
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function scrollToBottom() {
+            var chatBox = document.getElementById("chat-box");
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function sendMessage() {
+            var userInputField = document.getElementById("user-input");
+            var userInput = userInputField.value;
+            if (userInput.trim() === "") return;
+
+            var typingIndicator = $("#typing-indicator");
+            var userHtml = `
+                <div class="message-wrapper user-wrapper">
+                    <div class="message user-message">${userInput}</div>
+                </div>`;
+            $(userHtml).insertBefore(typingIndicator);
+
+            userInputField.value = "";
+            userInputField.disabled = true;
+            scrollToBottom();
+
+            typingIndicator.css("display", "flex");
+            scrollToBottom();
+
+            $.post("/get", { msg: userInput })
+                .done(function (data) {
+                    typingIndicator.css("display", "none");
+                    userInputField.disabled = false;
+                    userInputField.focus();
+                    var botHtml = `
+                        <div class="message-wrapper bot-wrapper">
+                            <div class="message bot-message">${data}</div>
+                        </div>`;
+                    $(botHtml).insertBefore(typingIndicator);
+                    scrollToBottom();
+                })
+                .fail(function () {
+                    typingIndicator.css("display", "none");
+                    userInputField.disabled = false;
+                    var botHtml = `
+                        <div class="message-wrapper bot-wrapper">
+                            <div class="message bot-message" style="color:#E53E3E;">
+                                Sorry, I am having trouble connecting to the server right now.
+                            </div>
+                        </div>`;
+                    $(botHtml).insertBefore(typingIndicator);
+                    scrollToBottom();
+                });
+        }
+
+        // ── Voice Input ──
+        (function () {
+            const micBtn            = document.getElementById('mic-btn');
+            const userInputField    = document.getElementById('user-input');
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            console.log('[Mic] SpeechRecognition available:', !!SpeechRecognition);
+
+            if (!SpeechRecognition) {
+                console.warn('[Mic] Web Speech API not supported in this browser.');
+                if (micBtn) {
+                    micBtn.style.display = 'none';
+                }
+                return;
+            }
+
+            if (!micBtn) {
+                console.warn('[Mic] mic-btn element not found in DOM.');
+                return;
+            }
+
+            let recognition     = null;
+            let isRecognizing   = false;
+            let accumulatedFinal = '';   // ← accumulate across ALL onresult calls
+            const origPlaceholder = userInputField.placeholder;
+
+            function buildRecognition() {
+                const r            = new SpeechRecognition();
+                r.continuous       = false;   // stop after one utterance
+                r.interimResults   = true;    // show text while speaking
+                r.lang             = 'en-IN';
+                r.maxAlternatives  = 1;
+
+                // ── Event: audio capture started ──
+                r.onaudiostart = function () {
+                    console.log('[Mic] onaudiostart — microphone audio stream opened');
+                };
+
+                // ── Event: speech detected in audio ──
+                r.onspeechstart = function () {
+                    console.log('[Mic] onspeechstart — speech detected');
+                };
+
+                // ── Event: recognition service started ──
+                r.onstart = function () {
+                    isRecognizing    = true;
+                    accumulatedFinal = '';
+                    micBtn.classList.add('recording');
+                    userInputField.placeholder = '🎙️ Listening… speak now';
+                    micBtn.title = 'Click to stop';
+                    console.log('[Mic] onstart — recognition started, lang:', r.lang);
+                };
+
+                // ── Event: result received ──
+                r.onresult = function (event) {
+                    console.log('[Mic] onresult — resultIndex:', event.resultIndex,
+                                'total results:', event.results.length);
+
+                    let interimText = '';
+
+                    // IMPORTANT: do NOT reset accumulatedFinal here.
+                    // Accumulate finals across ALL calls; only reset on new session (onstart).
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const result     = event.results[i];
+                        const transcript = result[0].transcript;
+                        const confidence = result[0].confidence;
+
+                        console.log('[Mic] result[' + i + '] isFinal:', result.isFinal,
+                                    '| transcript: "' + transcript + '"',
+                                    '| confidence:', confidence);
+
+                        if (result.isFinal) {
+                            accumulatedFinal += transcript + ' ';
+                        } else {
+                            interimText += transcript;
+                        }
+                    }
+
+                    // Show what we have so far in the input box
+                    const display = (accumulatedFinal + interimText).trim();
+                    userInputField.value = display;
+                    console.log('[Mic] input box updated to: "' + display + '"');
+                };
+
+                // ── Event: no speech in audio ──
+                r.onspeechend = function () {
+                    console.log('[Mic] onspeechend — speech stopped');
+                };
+
+                // ── Event: recognition ended ──
+                r.onend = function () {
+                    console.log('[Mic] onend — accumulatedFinal: "' + accumulatedFinal + '"');
+                    isRecognizing = false;
+                    micBtn.classList.remove('recording');
+                    userInputField.placeholder = origPlaceholder;
+                    micBtn.title = 'Voice Input';
+                    recognition  = null;
+
+                    const finalText = accumulatedFinal.trim();
+                    if (finalText) {
+                        userInputField.value = finalText;
+                        userInputField.focus();
+                        console.log('[Mic] ✅ Text placed in input: "' + finalText + '"');
+                    } else {
+                        console.warn('[Mic] ⚠️ onend fired but no final transcript was accumulated.');
+                        userInputField.value = '';
+                    }
+                };
+
+                // ── Event: error ──
+                r.onerror = function (event) {
+                    console.error('[Mic] onerror — error code:', event.error, '| message:', event.message);
+                    isRecognizing = false;
+                    micBtn.classList.remove('recording');
+                    userInputField.placeholder = origPlaceholder;
+                    micBtn.title = 'Voice Input';
+                    recognition  = null;
+                    accumulatedFinal = '';
+
+                    const code = event.error;
+                    if (code === 'not-allowed' || code === 'permission-denied') {
+                        alert(
+                            'Microphone permission denied.\n\n' +
+                            'To fix:\n' +
+                            '1. Click the 🔒 lock icon in the browser address bar\n' +
+                            '2. Set Microphone → Allow\n' +
+                            '3. Reload the page and try again.'
+                        );
+                    } else if (code === 'no-speech') {
+                        userInputField.placeholder = '⚠️ No speech detected — try again';
+                        setTimeout(function () {
+                            userInputField.placeholder = origPlaceholder;
+                        }, 2500);
+                    } else if (code === 'network') {
+                        alert('Speech recognition requires an internet connection.\nCheck your connection and try again.');
+                    } else if (code === 'audio-capture') {
+                        alert('No microphone detected. Please connect one and try again.');
+                    } else if (code === 'aborted') {
+                        console.log('[Mic] Recognition was aborted (user stopped manually).');
+                    } else {
+                        alert('Voice input error: "' + code + '"\n\nOpen browser DevTools (F12) → Console for details.');
+                    }
+                };
+
+                return r;
+            }
+
+            micBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                console.log('[Mic] button clicked — isRecognizing:', isRecognizing);
+
+                if (isRecognizing && recognition) {
+                    console.log('[Mic] stopping recognition manually');
+                    try { recognition.stop(); } catch (err) {
+                        console.error('[Mic] error stopping:', err);
+                    }
+                    return;
+                }
+
+                // Always build a fresh instance — reusing a stopped instance
+                // throws InvalidStateError in Chrome/Edge
+                recognition = buildRecognition();
+                console.log('[Mic] starting fresh recognition instance');
+                try {
+                    recognition.start();
+                } catch (err) {
+                    console.error('[Mic] recognition.start() threw:', err);
+                    isRecognizing = false;
+                    micBtn.classList.remove('recording');
+                    recognition = null;
+                    alert('Could not start microphone.\nError: ' + err.message +
+                          '\n\nOpen DevTools (F12) → Console for details.');
+                }
+            });
+
+        })();
+
+        // ── New Chat ──
+        document.getElementById('new-chat-btn').addEventListener('click', function () {
+            const chatBox = document.getElementById('chat-box');
+            const typingIndicator = document.getElementById('typing-indicator');
+
+            // Remove every message except the typing indicator
+            Array.from(chatBox.children).forEach(function (child) {
+                if (child.id !== 'typing-indicator') child.remove();
+            });
+
+            // Re-insert the welcome message before the typing indicator
+            const welcome = document.createElement('div');
+            welcome.className = 'message-wrapper bot-wrapper';
+            welcome.innerHTML = `<div class="message bot-message">
+                Hello there! 👋 I'm the JNTU-GV Enquiry Bot.<br><br>
+                How can I assist you today? Try asking me about our <strong>courses</strong>,
+                <strong>fees</strong>, <strong>admission process</strong>, or <strong>placements</strong>.
+            </div>`;
+            chatBox.insertBefore(welcome, typingIndicator);
+
+            // Clear and re-focus the input
+            const input = document.getElementById('user-input');
+            input.value = '';
+            input.disabled = false;
+            input.focus();
+
+            // Make sure typing indicator is hidden
+            typingIndicator.style.display = 'none';
+
+            scrollToBottom();
+        });
+
+        // ── Expand / Collapse ──
+        const chatContainer = document.querySelector('.chat-container');
+        const expandBtn     = document.getElementById('expand-btn');
+        const expandIcon    = document.getElementById('expand-icon');
+        const collapseIcon  = document.getElementById('collapse-icon');
+
+        expandBtn.addEventListener('click', function () {
+            const isExpanded = chatContainer.classList.toggle('expanded');
+
+            // Swap icons
+            expandIcon.style.display  = isExpanded ? 'none'  : '';
+            collapseIcon.style.display = isExpanded ? ''     : 'none';
+
+            // Update tooltip
+            expandBtn.title = isExpanded ? 'Collapse Chat' : 'Expand Chat';
+
+            // Scroll the chat section into view smoothly when expanding
+            if (isExpanded) {
+                document.getElementById('chat').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            scrollToBottom();
+        });
+    </script>
+</body>
+
+</html>

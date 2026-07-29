@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History | JNTU-GV Admin</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="/admin" class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-text">
+                    <div class="b-name">JNTU-GV</div>
+                    <div class="b-role">Admin Panel</div>
+                </div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="nav-label">Main</div>
+            <a href="/admin" class="menu-item">
+                <span class="menu-icon">📊</span><span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="menu-item">
+                <span class="menu-icon">👥</span><span>Users</span>
+            </a>
+            <div class="nav-label">Activity</div>
+            <a href="/admin/chat_history" class="menu-item active">
+                <span class="menu-icon">💬</span><span>Chat History</span>
+            </a>
+            <a href="/admin/feedback" class="menu-item">
+                <span class="menu-icon">⭐</span><span>Feedback</span>
+            </a>
+            <a href="/admin/unanswered" class="menu-item">
+                <span class="menu-icon">❓</span><span>Unanswered Questions</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout" class="menu-item">
+                <span class="menu-icon">🚪</span><span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div>
+                <div class="topbar-title">Chat History</div>
+                <div class="topbar-meta">JNTU-GV College Enquiry System</div>
+            </div>
+            <div class="topbar-right">
+                <div class="admin-pill">
+                    <div class="admin-avatar">{{ current_user[0]|upper }}</div>
+                    {{ current_user }}
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-heading">
+                <h1>Global Chat History</h1>
+                <p>Complete conversational logs between users and the AI Enquiry Bot.</p>
+            </div>
+
+            <div class="chat-list" id="history-container">
+                <div class="empty-state">Loading chat history…</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatBotResponse(text) {
+            if (!text) return "";
+            text = text.replace(/<br>/g, "\n");
+            let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank" class="chat-link">$1</a>');
+            html = html.replace(/(https?:\/\/[^\s<]+)/g, function(match, url) {
+                if (text.includes('[' + url + '](') || text.includes('](' + url + ')')) return match;
+                return '<a href="' + url + '" target="_blank" class="chat-link">' + url + '</a>';
+            });
+            let parts = html.split(/(\n\*.*)/g);
+            let result = '', inList = false;
+            for (let i = 0; i < parts.length; i++) {
+                let part = parts[i];
+                if (part.startsWith('\n*')) {
+                    if (!inList) { result += '<ul style="margin-left:18px;margin-top:6px;margin-bottom:6px;">'; inList = true; }
+                    result += '<li style="margin-bottom:3px;">' + part.substring(2).trim() + '</li>';
+                } else {
+                    if (inList) { result += '</ul>'; inList = false; }
+                    result += part.replace(/\n/g, '<br>');
+                }
+            }
+            if (inList) result += '</ul>';
+            return result;
+        }
+
+        async function fetchHistory() {
+            try {
+                const res = await fetch('/api/chat_history?all=true');
+                const chats = await res.json();
+                const container = document.getElementById('history-container');
+
+                if (chats.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No chat history found.</div>';
+                    return;
+                }
+
+                let html = '';
+                chats.forEach(chat => {
+                    const date = new Date(chat.timestamp).toLocaleString();
+                    const initial = chat.username ? chat.username.charAt(0).toUpperCase() : '?';
+                    const formattedBot = formatBotResponse(chat.bot_response);
+                    html += `<div class="chat-card">
+                        <div class="chat-card-header">
+                            <div class="chat-user-row">
+                                <div class="u-avatar">${initial}</div>
+                                <span class="chat-username">@${chat.username}</span>
+                            </div>
+                            <span class="chat-time">${date}</span>
+                        </div>
+                        <div class="chat-body">
+                            <div class="bubble bubble-q"><strong>Q:</strong> ${chat.user_msg}</div>
+                            <div class="bubble bubble-a"><strong>A:</strong><br>${formattedBot}</div>
+                        </div>
+                    </div>`;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                console.error("Error fetching chat history:", e);
+                document.getElementById('history-container').innerHTML = '<div class="empty-state" style="color:#B91C1C;">Error loading history.</div>';
+            }
+        }
+
+        fetchHistory();
+        setInterval(fetchHistory, 10000);
+    </script>
+</body>
+</html>

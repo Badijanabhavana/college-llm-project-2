@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments | JNTU-GV</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: #f0f6ff;
+            color: #1e293b;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topbar {
+            background: white;
+            box-shadow: 0 2px 16px rgba(59, 130, 246, 0.1);
+            padding: 1rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            border-bottom: 2px solid #e0eaff;
+        }
+
+        .topbar-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            padding: 0.55rem 1.3rem;
+            background: #EFF6FF;
+            color: #2563EB;
+            border: 1.5px solid #BFDBFE;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #DBEAFE;
+            border-color: #93C5FD;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%);
+            text-align: center;
+            padding: 5rem 5% 4rem;
+            color: white;
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            color: #BFDBFE;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        /* Department Cards Grid */
+        .dept-section {
+            padding: 3.5rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-left: 5px solid #3B82F6;
+            padding-left: 1rem;
+        }
+
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .dept-card {
+            background: white;
+            border: 2px solid #DBEAFE;
+            border-radius: 18px;
+            padding: 1.8rem 1.4rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.07);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dept-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #2563EB, #60A5FA);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .dept-card:hover::after,
+        .dept-card.active::after {
+            transform: scaleX(1);
+        }
+
+        .dept-card:hover,
+        .dept-card.active {
+            transform: translateY(-6px);
+            border-color: #93C5FD;
+            box-shadow: 0 16px 36px rgba(37, 99, 235, 0.16);
+            background: #f0f6ff;
+        }
+
+        .dept-card.active {
+            background: #EFF6FF;
+            border-color: #3B82F6;
+        }
+
+        .dept-icon {
+            font-size: 2.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .dept-card h3 {
+            color: #1e3a8a;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .dept-card p {
+            color: #64748b;
+            font-size: 0.82rem;
+        }
+
+        .dept-badge {
+            display: inline-block;
+            background: #EFF6FF;
+            color: #2563EB;
+            border: 1px solid #BFDBFE;
+            border-radius: 20px;
+            padding: 0.18rem 0.65rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Detail Panel */
+        .detail-panel {
+            display: none;
+            background: white;
+            border: 2px solid #BFDBFE;
+            border-radius: 20px;
+            margin: 2rem 0;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.12);
+            animation: slideDown 0.4s ease;
+        }
+
+        .detail-panel.visible {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e0eaff;
+        }
+
+        .detail-icon {
+            font-size: 4rem;
+        }
+
+        .detail-header-text h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e3a8a;
+        }
+
+        .detail-header-text p {
+            color: #64748b;
+            font-size: 1rem;
+            margin-top: 0.3rem;
+        }
+
+        .detail-tag {
+            display: inline-block;
+            background: #EFF6FF;
+            color: #2563EB;
+            border: 1.5px solid #BFDBFE;
+            border-radius: 20px;
+            padding: 0.25rem 0.85rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .detail-box {
+            background: #f8faff;
+            border: 1.5px solid #DBEAFE;
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+
+        .detail-box h4 {
+            color: #1e3a8a;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-box ul {
+            list-style: none;
+        }
+
+        .detail-box ul li {
+            padding: 0.4rem 0;
+            color: #475569;
+            font-size: 0.92rem;
+            border-bottom: 1px solid #e0eaff;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .detail-box ul li:last-child {
+            border-bottom: none;
+        }
+
+        .detail-box ul li::before {
+            content: '→';
+            color: #3B82F6;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Faculty */
+        .faculty-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .faculty-card {
+            background: white;
+            border: 1.5px solid #DBEAFE;
+            border-radius: 12px;
+            padding: 1.1rem;
+            text-align: center;
+        }
+
+        .faculty-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563EB, #60A5FA);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 0.6rem;
+        }
+
+        .faculty-card h5 {
+            color: #1e3a8a;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .faculty-card p {
+            color: #64748b;
+            font-size: 0.78rem;
+        }
+
+        /* Lab placeholders */
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .lab-placeholder {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border: 2px dashed #93C5FD;
+            border-radius: 14px;
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #3B82F6;
+            font-size: 0.85rem;
+            font-weight: 600;
+            gap: 0.5rem;
+        }
+
+        .lab-placeholder span {
+            font-size: 2rem;
+        }
+
+        /* Close btn */
+        .close-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 1.5rem;
+            padding: 0.55rem 1.3rem;
+            background: #FEE2E2;
+            color: #dc2626;
+            border: 1.5px solid #FECACA;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .close-btn:hover {
+            background: #FECACA;
+        }
+
+        /* CTA */
+        .cta {
+            text-align: center;
+            padding: 3rem 5%;
+            background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+            border-top: 2px solid #BFDBFE;
+            margin-top: 1rem;
+        }
+
+        .cta h2 {
+            font-size: 1.7rem;
+            color: #1e3a8a;
+            margin-bottom: 0.8rem;
+            font-weight: 800;
+        }
+
+        .cta p {
+            color: #64748b;
+            margin-bottom: 1.8rem;
+        }
+
+        .btn-primary {
+            padding: 0.9rem 2.5rem;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.45);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .detail-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="topbar">
+        <div class="topbar-logo">🏛️ JNTU-GV</div>
+        <a href="/" class="btn-back">← Back to Home</a>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-badge">🎓 Academic Departments</div>
+        <h1>Explore Our <span>Departments</span></h1>
+        <p>Click any department below to view its full details — subjects, faculty, labs, and more.</p>
+    </div>
+
+    <div class="dept-section">
+        <div class="section-title">🏫 Choose a Department</div>
+
+        <div class="dept-grid">
+            <div class="dept-card" onclick="showDept('cse')" id="card-cse">
+                <div class="dept-icon">💻</div>
+                <span class="dept-badge">B.Tech / M.Tech</span>
+                <h3>Computer Science (CSE)</h3>
+                <p>AI, Software & Cloud</p>
+            </div>
+            <div class="dept-card" onclick="showDept('ece')" id="card-ece">
+                <div class="dept-icon">⚡</div>
+                <span class="dept-badge">B.Tech / M.Tech</span>
+                <h3>Electronics & Communication (ECE)</h3>
+                <p>VLSI, IoT & Embedded</p>
+            </div>
+            <div class="dept-card" onclick="showDept('eee')" id="card-eee">
+                <div class="dept-icon">🔌</div>
+                <span class="dept-badge">B.Tech</span>
+                <h3>Electrical Engineering (EEE)</h3>
+                <p>Power Systems & Control</p>
+            </div>
+            <div class="dept-card" onclick="showDept('it')" id="card-it">
+                <div class="dept-icon">🌐</div>
+                <span class="dept-badge">B.Tech</span>
+                <h3>Information Technology (IT)</h3>
+                <p>Networks & Web Tech</p>
+            </div>
+            <div class="dept-card" onclick="showDept('mech')" id="card-mech">
+                <div class="dept-icon">⚙️</div>
+                <span class="dept-badge">B.Tech / M.Tech</span>
+                <h3>Mechanical Engineering</h3>
+                <p>Design, Thermal & Manufacturing</p>
+            </div>
+            <div class="dept-card" onclick="showDept('mca')" id="card-mca">
+                <div class="dept-icon">🖥️</div>
+                <span class="dept-badge">PG – MCA</span>
+                <h3>Computer Applications (MCA)</h3>
+                <p>Advanced Programming</p>
+            </div>
+            <div class="dept-card" onclick="showDept('mba')" id="card-mba">
+                <div class="dept-icon">📈</div>
+                <span class="dept-badge">PG – MBA</span>
+                <h3>Business Administration (MBA)</h3>
+                <p>Management & Leadership</p>
+            </div>
+            <div class="dept-card" onclick="showDept('bpharm')" id="card-bpharm">
+                <div class="dept-icon">💊</div>
+                <span class="dept-badge">B.Pharmacy</span>
+                <h3>Pharmacy</h3>
+                <p>Drug Science & Clinical</p>
+            </div>
+        </div>
+
+        <!-- Detail Panel -->
+        <div class="detail-panel" id="detail-panel">
+            <div id="detail-content"></div>
+            <button class="close-btn" onclick="closeDetail()">✕ Close Details</button>
+        </div>
+    </div>
+
+    <div class="cta">
+        <h2>Have Questions About a Department?</h2>
+        <p>Ask our AI assistant for instant, detailed information on any course or faculty.</p>
+        <a href="/#chat" class="btn-primary">💬 Ask Enquiry Bot</a>
+    </div>
+
+    <script>
+        const depts = {
+            cse: {
+                icon: '💻', name: 'Computer Science & Engineering (CSE)', badge: 'B.Tech / M.Tech',
+                desc: 'The CSE department at JNTU-GV College of Engineering, Vizianagaram (CEV) is one of the flagship departments, consistently producing skilled engineers. With a strong focus on both theory and practicals, students gain expertise in modern computing disciplines ranging from AI to cloud infrastructure.',
+                subjects: ['Data Structures & Algorithms', 'Operating Systems', 'Database Management Systems', 'Artificial Intelligence & ML', 'Cloud Computing & DevOps', 'Cyber Security', 'Computer Networks', 'Software Engineering'],
+                faculty: [
+                    { name: 'Faculty Head – CSE', role: 'HOD & Professor', emoji: '👨‍🏫' },
+                    { name: 'Associate Professor', role: 'Networks & Security', emoji: '👩‍🏫' },
+                    { name: 'Assistant Professor', role: 'AI/ML & Cloud', emoji: '👨‍💼' },
+                    { name: 'Assistant Professor', role: 'DBMS & SE', emoji: '👩‍💼' }
+                ],
+                labs: ['Programming Lab', 'AI & ML Lab', 'Networks Lab', 'Cloud Computing Lab']
+            },
+            ece: {
+                icon: '⚡', name: 'Electronics & Communication Engineering (ECE)', badge: 'B.Tech / M.Tech',
+                desc: 'The ECE department at JNTU-GV CEV bridges the gap between hardware and software, focusing on telecommunications, VLSI chip design, and embedded computing. Students work on real-world IoT projects and industry-standard simulation tools.',
+                subjects: ['Digital Signal Processing', 'Microprocessors & Microcontrollers', 'VLSI Design', 'Antenna & Wave Propagation', 'Embedded Systems', 'IoT & Wireless Networks', 'Communication Systems', 'Control Systems'],
+                faculty: [
+                    { name: 'Faculty Head – ECE', role: 'HOD & Professor – VLSI', emoji: '👨‍🏫' },
+                    { name: 'Associate Professor', role: 'Digital Signal Processing', emoji: '👩‍🏫' },
+                    { name: 'Assistant Professor', role: 'Embedded Systems', emoji: '👨‍💼' },
+                    { name: 'Assistant Professor', role: 'IoT & Wireless', emoji: '👩‍💼' }
+                ],
+                labs: ['VLSI Design Lab', 'Embedded Systems Lab', 'Communication Lab', 'IoT Lab']
+            },
+            eee: {
+                icon: '🔌', name: 'Electrical & Electronics Engineering (EEE)', badge: 'B.Tech',
+                desc: 'The EEE department at JNTU-GV covers core electrical principles including power generation, transmission, and smart grid technologies. Students are prepared for careers in power sector companies, PSUs like BSNL & ONGC, and energy management firms.',
+                subjects: ['Electrical Circuits', 'Power Systems', 'Electrical Machines', 'Control Systems', 'Power Electronics', 'Renewable Energy Systems', 'High Voltage Engineering', 'PLC & SCADA'],
+                faculty: [
+                    { name: 'Faculty Head – EEE', role: 'HOD & Professor – Power Systems', emoji: '👨‍🏫' },
+                    { name: 'Associate Professor', role: 'Electrical Machines', emoji: '👩‍🏫' },
+                    { name: 'Assistant Professor', role: 'Power Electronics', emoji: '👨‍💼' },
+                    { name: 'Assistant Professor', role: 'Renewable Energy', emoji: '👩‍💼' }
+                ],
+                labs: ['Power Systems Lab', 'Electrical Machines Lab', 'Control Systems Lab', 'Power Electronics Lab']
+            },
+            it: {
+                icon: '🌐', name: 'Information Technology (IT)', badge: 'B.Tech',
+                desc: 'The IT department at JNTU-GV focuses on web technologies, network security, database systems, and software development methodologies. Graduates are highly sought after by IT service companies and product startups alike.',
+                subjects: ['Web Technologies', 'Computer Networks & Security', 'Software Project Management', 'Mobile Application Development', 'Big Data Analytics', 'UI/UX Design', 'Cloud Architecture', 'Ethical Hacking'],
+                faculty: [
+                    { name: 'Faculty Head – IT', role: 'HOD & Professor – Web Tech', emoji: '👩‍🏫' },
+                    { name: 'Associate Professor', role: 'Cyber Security', emoji: '👨‍💼' },
+                    { name: 'Assistant Professor', role: 'Mobile Development', emoji: '👩‍💼' },
+                    { name: 'Assistant Professor', role: 'Big Data & Cloud', emoji: '👨‍💼' }
+                ],
+                labs: ['Web Dev Lab', 'Cyber Security Lab', 'Big Data Lab', 'Mobile Apps Lab']
+            },
+            mech: {
+                icon: '⚙️', name: 'Mechanical Engineering', badge: 'B.Tech / M.Tech',
+                desc: 'The Mechanical Engineering department at JNTU-GV offers in-depth training in design, manufacturing, thermal sciences, and industrial automation. The department is equipped with CNC machines, CAD/CAM software, and material testing labs.',
+                subjects: ['Engineering Mechanics', 'Thermodynamics', 'Fluid Mechanics', 'Theory of Machines', 'Manufacturing Technology', 'CAD / CAM', 'Finite Element Analysis', 'Robotics & Automation'],
+                faculty: [
+                    { name: 'Faculty Head – Mech.', role: 'HOD & Professor – Thermal', emoji: '👨‍🏫' },
+                    { name: 'Associate Professor', role: 'Design & CAD/CAM', emoji: '👩‍🏫' },
+                    { name: 'Assistant Professor', role: 'Manufacturing Tech.', emoji: '👨‍💼' },
+                    { name: 'Assistant Professor', role: 'Robotics & Automation', emoji: '👩‍💼' }
+                ],
+                labs: ['CNC Machining Lab', 'CAD/CAM Lab', 'Thermal Lab', 'Material Testing Lab']
+            },
+            mca: {
+                icon: '🖥️', name: 'Master of Computer Applications (MCA)', badge: 'PG – 2 Years',
+                desc: 'The MCA program at JNTU-GV is a specialized postgraduate course covering advanced programming, enterprise software development, and modern application frameworks. Admitted through AP ICET. Students build industry-ready skills from day one.',
+                subjects: ['Advanced Java & Spring Boot', 'Python & Django', 'Software Engineering', 'Mobile App Development', 'Web Technologies (React/Angular)', 'Data Structures & Algorithms', 'Cloud & DevOps', 'Project Management'],
+                faculty: [
+                    { name: 'Faculty Head – MCA', role: 'HOD & Professor – Java/Python', emoji: '👨‍🏫' },
+                    { name: 'Associate Professor', role: 'Python & Full-Stack', emoji: '👩‍🏫' },
+                    { name: 'Assistant Professor', role: 'Web Technologies', emoji: '👨‍💼' },
+                    { name: 'Assistant Professor', role: 'Mobile Development', emoji: '👩‍💼' }
+                ],
+                labs: ['Java & Spring Lab', 'Python Lab', 'Web Dev Lab', 'Project Studio']
+            },
+            mba: {
+                icon: '📈', name: 'Master of Business Administration (MBA)', badge: 'PG – 2 Years',
+                desc: 'The MBA program at JNTU-GV CEV cultivates future business leaders with a focus on strategic thinking, analytics, and real-world case studies. Admitted through AP ICET. Specializations include Finance, Marketing, HR, and Operations.',
+                subjects: ['Business Statistics & Analytics', 'Managerial Economics', 'Financial Management', 'Marketing Management', 'Human Resource Management', 'Operations & Supply Chain', 'Business Ethics & CSR', 'Strategic Management'],
+                faculty: [
+                    { name: 'Faculty Head – MBA', role: 'HOD & Professor – Finance', emoji: '👨‍🏫' },
+                    { name: 'Associate Professor', role: 'Marketing Management', emoji: '👩‍🏫' },
+                    { name: 'Assistant Professor', role: 'HR & OB', emoji: '👨‍💼' },
+                    { name: 'Assistant Professor', role: 'Operations & SCM', emoji: '👩‍💼' }
+                ],
+                labs: ['Business Analytics Lab', 'Case Study Room', 'Finance Simulation Lab', 'Boardroom / Seminar Hall']
+            },
+            bpharm: {
+                icon: '💊', name: 'Bachelor of Pharmacy (B.Pharmacy)', badge: 'UG – 4 Years',
+                desc: 'The B.Pharmacy program at JNTU-GV College of Pharmaceutical Sciences (CPSV) provides a comprehensive understanding of pharmaceutical sciences, drug formulation, clinical pharmacology, and regulatory affairs. Graduates are equipped for pharma companies, hospitals, and research labs.',
+                subjects: ['Pharmacology I & II', 'Pharmaceutical Chemistry', 'Pharmaceutics & Drug Formulation', 'Human Anatomy & Physiology', 'Medicinal Chemistry', 'Clinical Pharmacy', 'Biopharmaceutics', 'Pharmacovigilance'],
+                faculty: [
+                    { name: 'Faculty Head – Pharmacy', role: 'HOD & Professor – Pharmacology', emoji: '👨‍🏫' },
+                    { name: 'Associate Professor', role: 'Pharmaceutical Chemistry', emoji: '👩‍🏫' },
+                    { name: 'Assistant Professor', role: 'Pharmaceutics', emoji: '👨‍💼' },
+                    { name: 'Assistant Professor', role: 'Clinical Pharmacy', emoji: '👩‍💼' }
+                ],
+                labs: ['Pharmacology Lab', 'Pharmaceutical Chemistry Lab', 'Drug Formulation Lab', 'Clinical Lab']
+            }
+        };
+
+        let activeDept = null;
+
+        function showDept(id) {
+            if (activeDept === id) { closeDetail(); return; }
+            activeDept = id;
+
+            // Update active card styling
+            document.querySelectorAll('.dept-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('card-' + id).classList.add('active');
+
+            const d = depts[id];
+            const subjects = d.subjects.map(s => `<li>${s}</li>`).join('');
+            const faculty = d.faculty.map(f => `
+                <div class="faculty-card">
+                    <div class="faculty-avatar">${f.emoji}</div>
+                    <h5>${f.name}</h5>
+                    <p>${f.role}</p>
+                </div>`).join('');
+            const labs = d.labs.map(l => `
+                <div class="lab-placeholder">
+                    <span>🏫</span>${l}
+                </div>`).join('');
+
+            document.getElementById('detail-content').innerHTML = `
+                <div class="detail-header">
+                    <div class="detail-icon">${d.icon}</div>
+                    <div class="detail-header-text">
+                        <span class="detail-tag">${d.badge}</span>
+                        <h2>${d.name}</h2>
+                        <p>${d.desc}</p>
+                    </div>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-box">
+                        <h4>📚 Subjects & Courses Offered</h4>
+                        <ul>${subjects}</ul>
+                    </div>
+                    <div>
+                        <div class="detail-box" style="margin-bottom:1.2rem;">
+                            <h4>👩‍🏫 Faculty Members</h4>
+                            <div class="faculty-list">${faculty}</div>
+                        </div>
+                        <div class="detail-box">
+                            <h4>🔬 Labs & Facilities</h4>
+                            <div class="lab-grid">${labs}</div>
+                        </div>
+                    </div>
+                </div>`;
+
+            const panel = document.getElementById('detail-panel');
+            panel.classList.add('visible');
+            setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
+
+        function closeDetail() {
+            activeDept = null;
+            document.querySelectorAll('.dept-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('detail-panel').classList.remove('visible');
+        }
+    </script>
+</body>
+
+</html>

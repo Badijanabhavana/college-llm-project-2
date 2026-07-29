@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History | JNTU-GV</title>
+    <link rel="stylesheet" href="/static/student.css">
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">JNTU-GV Enquiry</span>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/home" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Home</span></a>
+            <a href="/#chat" class="menu-item"><span class="menu-icon">🤖</span><span class="menu-text">Ask Bot</span></a>
+            <a href="/feedback" class="menu-item"><span class="menu-icon">✍️</span><span class="menu-text">Give Feedback</span></a>
+            <a href="/chat_history" class="menu-item active"><span class="menu-icon">💬</span><span class="menu-text">Chat History</span></a>
+            <a href="/records" class="menu-item"><span class="menu-icon">📋</span><span class="menu-text">Feedback Record</span></a>
+            <a href="/logout" class="menu-item" style="margin-top: auto;"><span class="menu-icon">🚪</span><span class="menu-text">Logout</span></a>
+        </nav>
+    </aside>
+
+    <main class="main-container">
+        <nav class="page-topbar">
+            <div class="topbar-logo">🎓 JNTU-GV</div>
+        </nav>
+
+        <div class="page-wrapper">
+            <div class="page-heading">
+                {% if is_admin %}
+                <h1>💬 Global Chat History</h1>
+                <p>Monitor all conversations between registered students and the enquiry bot in real-time.</p>
+                {% else %}
+                <h1>💬 My Chat History</h1>
+                <p>View your past conversations with the enquiry bot.</p>
+                {% endif %}
+            </div>
+
+            <div class="history-list" id="history-list">
+                <div class="empty-state">Loading chat logs…</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function fetchChatHistory() {
+            try {
+                const res = await fetch('/api/chat_history');
+                const chats = await res.json();
+                const list = document.getElementById('history-list');
+
+                if (chats.length === 0) {
+                    list.innerHTML = '<div class="empty-state">No conversations have been recorded yet.</div>';
+                    return;
+                }
+
+                let html = '';
+                chats.forEach(c => {
+                    html += `<div class="history-item">
+                        <div class="h-top">
+                            <div class="h-user">@${c.username}</div>
+                            <div class="h-date">${c.timestamp}</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:0.7rem;">
+                            <div class="chat-bubble-user"><strong>User:</strong> ${c.user_msg}</div>
+                            <div class="chat-bubble-bot"><strong>Bot:</strong> ${c.bot_response}</div>
+                        </div>
+                    </div>`;
+                });
+                list.innerHTML = html;
+            } catch (e) {
+                console.error("Error fetching chat history:", e);
+            }
+        }
+
+        fetchChatHistory();
+        setInterval(fetchChatHistory, 5000);
+    </script>
+</body>
+</html>

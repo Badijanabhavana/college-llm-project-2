@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | JNTU-GV</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="/admin" class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-text">
+                    <div class="b-name">JNTU-GV</div>
+                    <div class="b-role">Admin Panel</div>
+                </div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="nav-label">Main</div>
+            <a href="/admin" class="menu-item active">
+                <span class="menu-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="menu-item">
+                <span class="menu-icon">👥</span>
+                <span>Users</span>
+            </a>
+            <div class="nav-label">Activity</div>
+            <a href="/admin/chat_history" class="menu-item">
+                <span class="menu-icon">💬</span>
+                <span>Chat History</span>
+            </a>
+            <a href="/admin/feedback" class="menu-item">
+                <span class="menu-icon">⭐</span>
+                <span>Feedback</span>
+            </a>
+            <a href="/admin/unanswered" class="menu-item">
+                <span class="menu-icon">❓</span>
+                <span>Unanswered Questions</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout" class="menu-item">
+                <span class="menu-icon">🚪</span>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div>
+                <div class="topbar-title">Admin Dashboard</div>
+                <div class="topbar-meta">JNTU-GV College Enquiry System</div>
+            </div>
+            <div class="topbar-right">
+                <div class="admin-pill">
+                    <div class="admin-avatar">{{ current_user[0]|upper }}</div>
+                    {{ current_user }}
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-heading">
+                <h1>Dashboard Overview</h1>
+                <p>Welcome back, {{ current_user }}. Here is your system's current status.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Total Users</span>
+                        <div class="stat-icon blue">👥</div>
+                    </div>
+                    <div class="stat-number">{{ users_count }}</div>
+                    <div class="stat-footer">
+                        <span class="stat-desc">Registered students and faculty</span>
+                        <a href="/admin/users" class="stat-link">View →</a>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Total Chats</span>
+                        <div class="stat-icon indigo">💬</div>
+                    </div>
+                    <div class="stat-number">{{ chat_history_count }}</div>
+                    <div class="stat-footer">
+                        <span class="stat-desc">AI assistant interactions logged</span>
+                        <a href="/admin/chat_history" class="stat-link">View →</a>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Feedback</span>
+                        <div class="stat-icon amber">⭐</div>
+                    </div>
+                    <div class="stat-number">{{ feedbacks_count }}</div>
+                    <div class="stat-footer">
+                        <span class="stat-desc">Ratings and reviews submitted</span>
+                        <a href="/admin/feedback" class="stat-link">View →</a>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Unanswered</span>
+                        <div class="stat-icon rose">❓</div>
+                    </div>
+                    <div class="stat-number">{{ unanswered_count }}</div>
+                    <div class="stat-footer">
+                        <span class="stat-desc">Queries the AI could not resolve</span>
+                        <a href="/admin/unanswered" class="stat-link">View →</a>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Recent Activity</span>
+                        <div class="stat-icon violet">⚡</div>
+                    </div>
+                    <div class="stat-number" style="font-size:1.5rem;">{{ recent_activity|length }} Chats</div>
+                    <div class="stat-footer">
+                        <span class="stat-desc">Latest conversations detected</span>
+                        <a href="/admin/chat_history" class="stat-link">View →</a>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">System Status</span>
+                        <div class="stat-icon green">🟢</div>
+                    </div>
+                    <div class="status-online">
+                        <span class="status-dot"></span>
+                        All Systems Online
+                    </div>
+                    <div class="stat-footer" style="margin-top:0.4rem;">
+                        <span class="stat-desc">LLM backend and database operational</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">Quick Actions</div>
+            <div class="actions-grid">
+                <a href="/admin/users" class="action-btn">
+                    <div class="action-icon">👥</div>Manage Users
+                </a>
+                <a href="/admin/chat_history" class="action-btn">
+                    <div class="action-icon">💬</div>View Chats
+                </a>
+                <a href="/admin/feedback" class="action-btn">
+                    <div class="action-icon">⭐</div>Review Feedback
+                </a>
+                <a href="/admin/unanswered" class="action-btn">
+                    <div class="action-icon">❓</div>Unanswered Queries
+                </a>
+                <a href="/home" class="action-btn">
+                    <div class="action-icon">🏠</div>Student View
+                </a>
+                <a href="/logout" class="action-btn">
+                    <div class="action-icon">🚪</div>Logout
+                </a>
+            </div>
+
+        </div><!-- /content -->
+    </div><!-- /main -->
+
+</body>
+</html>

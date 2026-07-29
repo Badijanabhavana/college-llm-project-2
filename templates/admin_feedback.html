@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback | JNTU-GV Admin</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="/admin" class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-text">
+                    <div class="b-name">JNTU-GV</div>
+                    <div class="b-role">Admin Panel</div>
+                </div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="nav-label">Main</div>
+            <a href="/admin" class="menu-item">
+                <span class="menu-icon">📊</span><span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="menu-item">
+                <span class="menu-icon">👥</span><span>Users</span>
+            </a>
+            <div class="nav-label">Activity</div>
+            <a href="/admin/chat_history" class="menu-item">
+                <span class="menu-icon">💬</span><span>Chat History</span>
+            </a>
+            <a href="/admin/feedback" class="menu-item active">
+                <span class="menu-icon">⭐</span><span>Feedback</span>
+            </a>
+            <a href="/admin/unanswered" class="menu-item">
+                <span class="menu-icon">❓</span><span>Unanswered Questions</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout" class="menu-item">
+                <span class="menu-icon">🚪</span><span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div>
+                <div class="topbar-title">User Feedback</div>
+                <div class="topbar-meta">JNTU-GV College Enquiry System</div>
+            </div>
+            <div class="topbar-right">
+                <div class="admin-pill">
+                    <div class="admin-avatar">{{ current_user[0]|upper }}</div>
+                    {{ current_user }}
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-heading">
+                <h1>User Feedback</h1>
+                <p>All ratings and reviews submitted by registered users.</p>
+            </div>
+
+            <div class="feedback-list" id="feedback-list">
+                <div class="empty-state">Loading feedback…</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getStarsHtml(rating) {
+            const n = parseInt(rating) || 5;
+            let html = '<span class="stars">';
+            for (let i = 0; i < n; i++)     html += '<span class="star-on">★</span>';
+            for (let i = 0; i < 5 - n; i++) html += '<span class="star-off">★</span>';
+            html += '</span>';
+            return html;
+        }
+
+        async function fetchFeedback() {
+            try {
+                const res = await fetch('/api/feedbacks');
+                const feedbacks = await res.json();
+                const list = document.getElementById('feedback-list');
+
+                if (feedbacks.length === 0) {
+                    list.innerHTML = '<div class="empty-state">No feedback has been recorded yet.</div>';
+                    return;
+                }
+
+                let html = '';
+                feedbacks.forEach(f => {
+                    const initial = f.username ? f.username.charAt(0).toUpperCase() : '?';
+                    html += `<div class="feedback-card">
+                        <div class="fb-header">
+                            <div class="fb-user">
+                                <div class="u-avatar lg">${initial}</div>
+                                <span class="fb-name">@${f.username}</span>
+                                ${getStarsHtml(f.stars)}
+                            </div>
+                            <span class="fb-date">${f.timestamp}</span>
+                        </div>
+                        <div class="fb-message">"${f.message}"</div>
+                    </div>`;
+                });
+                list.innerHTML = html;
+            } catch (e) {
+                console.error("Error fetching feedback:", e);
+            }
+        }
+
+        fetchFeedback();
+        setInterval(fetchFeedback, 5000);
+    </script>
+</body>
+</html>

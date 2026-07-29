@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Record | JNTU-GV</title>
+    <link rel="stylesheet" href="/static/student.css">
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">JNTU-GV Enquiry</span>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/home" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Home</span></a>
+            <a href="/home#chat" class="menu-item"><span class="menu-icon">🤖</span><span class="menu-text">Ask Bot</span></a>
+            <a href="/feedback" class="menu-item"><span class="menu-icon">✍️</span><span class="menu-text">Give Feedback</span></a>
+            <a href="/chat_history" class="menu-item"><span class="menu-icon">💬</span><span class="menu-text">Chat History</span></a>
+            <a href="/records" class="menu-item active"><span class="menu-icon">📋</span><span class="menu-text">Feedback Record</span></a>
+            <a href="/logout" class="menu-item" style="margin-top: auto;"><span class="menu-icon">🚪</span><span class="menu-text">Logout</span></a>
+        </nav>
+    </aside>
+
+    <main class="main-container">
+        <nav class="page-topbar">
+            <div class="topbar-logo">🎓 JNTU-GV</div>
+        </nav>
+
+        <div class="page-wrapper">
+            <div class="page-heading">
+                <h1>📋 Feedback Record</h1>
+                <p>A historical log of all feedback submitted by registered students.</p>
+            </div>
+
+            <div class="feedback-list" id="feedback-list">
+                <div class="empty-state">Loading feedback…</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function getStarsHtml(rating) {
+            let n = parseInt(rating) || 5;
+            let html = '<span style="color:#FBBF24;margin-left:8px;font-size:1.05rem;">';
+            for (let i = 0; i < n; i++) html += '★';
+            html += '</span><span style="color:#CBD5E1;font-size:1.05rem;">';
+            for (let i = 0; i < 5 - n; i++) html += '★';
+            html += '</span>';
+            return html;
+        }
+
+        async function fetchFeedback() {
+            try {
+                const res = await fetch('/api/feedbacks');
+                const feedbacks = await res.json();
+                const list = document.getElementById('feedback-list');
+
+                if (feedbacks.length === 0) {
+                    list.innerHTML = '<div class="empty-state">No feedback has been recorded yet.</div>';
+                    return;
+                }
+
+                let html = '';
+                feedbacks.forEach(f => {
+                    const initial = f.username ? f.username.charAt(0).toUpperCase() : '?';
+                    html += `<div class="feedback-item">
+                        <div class="f-top">
+                            <div class="f-user">
+                                <div class="f-avatar">${initial}</div>
+                                @${f.username}
+                                ${getStarsHtml(f.stars)}
+                            </div>
+                            <div class="f-date">${f.timestamp}</div>
+                        </div>
+                        <div class="f-msg">"${f.message}"</div>
+                    </div>`;
+                });
+                list.innerHTML = html;
+            } catch (e) {
+                console.error("Error fetching feedback:", e);
+            }
+        }
+
+        fetchFeedback();
+        setInterval(fetchFeedback, 5000);
+    </script>
+</body>
+</html>

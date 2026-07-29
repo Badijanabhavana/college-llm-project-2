@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unanswered Questions | JNTU-GV Admin</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="/admin" class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-text">
+                    <div class="b-name">JNTU-GV</div>
+                    <div class="b-role">Admin Panel</div>
+                </div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="nav-label">Main</div>
+            <a href="/admin" class="menu-item">
+                <span class="menu-icon">📊</span><span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="menu-item">
+                <span class="menu-icon">👥</span><span>Users</span>
+            </a>
+            <div class="nav-label">Activity</div>
+            <a href="/admin/chat_history" class="menu-item">
+                <span class="menu-icon">💬</span><span>Chat History</span>
+            </a>
+            <a href="/admin/feedback" class="menu-item">
+                <span class="menu-icon">⭐</span><span>Feedback</span>
+            </a>
+            <a href="/admin/unanswered" class="menu-item active">
+                <span class="menu-icon">❓</span><span>Unanswered Questions</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout" class="menu-item">
+                <span class="menu-icon">🚪</span><span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div>
+                <div class="topbar-title">Unanswered Questions</div>
+                <div class="topbar-meta">JNTU-GV College Enquiry System</div>
+            </div>
+            <div class="topbar-right">
+                <div class="admin-pill">
+                    <div class="admin-avatar">{{ current_user[0]|upper }}</div>
+                    {{ current_user }}
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-heading">
+                <h1>Unanswered Questions</h1>
+                <p>Queries the AI Enquiry Bot could not confidently respond to.</p>
+            </div>
+
+            <div class="question-grid" id="unanswered-grid">
+                <div class="empty-state">Loading questions…</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchUnanswered() {
+            try {
+                const res = await fetch('/api/unanswered');
+                const questions = await res.json();
+                const grid = document.getElementById('unanswered-grid');
+
+                if (questions.length === 0) {
+                    grid.innerHTML = '<div class="empty-state">No unanswered questions found — the bot is doing great! 🎉</div>';
+                    return;
+                }
+
+                let html = '';
+                questions.forEach(q => {
+                    const initial = q.username ? q.username.charAt(0).toUpperCase() : '?';
+                    html += `<div class="question-card">
+                        <div class="q-header">
+                            <div class="q-user">
+                                <div class="u-avatar">${initial}</div>
+                                <span class="q-username">@${q.username}</span>
+                            </div>
+                            <span class="q-time">${q.timestamp}</span>
+                        </div>
+                        <div class="q-body">"${q.query}"</div>
+                        <button class="btn-resolve" onclick="resolveQuestion(${q.id})">Mark as Resolved</button>
+                    </div>`;
+                });
+                grid.innerHTML = html;
+            } catch (e) {
+                console.error("Error fetching unanswered questions:", e);
+            }
+        }
+
+        function resolveQuestion(id) {
+            alert("This feature would typically add the answer to the RAG database and notify the user.");
+        }
+
+        fetchUnanswered();
+        setInterval(fetchUnanswered, 5000);
+    </script>
+</body>
+</html>

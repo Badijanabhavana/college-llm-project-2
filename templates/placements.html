@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placements | JNTU-GV</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: #f0f6ff;
+            color: #1e293b;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topbar {
+            background: white;
+            box-shadow: 0 2px 16px rgba(59, 130, 246, 0.1);
+            padding: 1rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #e0eaff;
+        }
+
+        .topbar-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            padding: 0.55rem 1.3rem;
+            background: #EFF6FF;
+            color: #2563EB;
+            border: 1.5px solid #BFDBFE;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #DBEAFE;
+            border-color: #93C5FD;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%);
+            text-align: center;
+            padding: 5rem 5% 4rem;
+            color: white;
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(6px);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            color: #BFDBFE;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 5%;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1.5px solid #DBEAFE;
+            border-radius: 16px;
+            padding: 2rem 1rem;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.07);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: #93C5FD;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.15);
+        }
+
+        .stat-card .num {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        .section {
+            padding: 2rem 5% 4rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .recruiter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .recruiter-card {
+            background: white;
+            border: 1.5px solid #DBEAFE;
+            border-radius: 12px;
+            padding: 1.3rem;
+            text-align: center;
+            font-weight: 700;
+            color: #1e3a8a;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.06);
+        }
+
+        .recruiter-card:hover {
+            background: #EFF6FF;
+            border-color: #93C5FD;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+        }
+
+        .recruiter-card .r-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .training-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .training-item {
+            background: white;
+            border: 1.5px solid #DBEAFE;
+            border-radius: 14px;
+            padding: 1.4rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.06);
+        }
+
+        .training-item:hover {
+            border-color: #93C5FD;
+            transform: translateX(6px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+        }
+
+        .training-item .t-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .training-item h3 {
+            color: #1e3a8a;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .training-item p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 3.5rem 5%;
+            background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+            border-top: 2px solid #BFDBFE;
+        }
+
+        .cta h2 {
+            font-size: 1.8rem;
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .cta p {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            padding: 0.9rem 2.5rem;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.45);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="topbar">
+        <div class="topbar-logo">💼 JNTU-GV</div>
+        <a href="/" class="btn-back">← Back to Home</a>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-badge">🏆 Placements 2025–26</div>
+        <h1>Our <span>Placement</span> Record</h1>
+        <p>A dedicated Career Development Center driving excellent outcomes for every student year after year.</p>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="num">₹12 LPA</div>
+            <div class="label">Highest Package</div>
+        </div>
+        <div class="stat-card">
+            <div class="num">₹4.5 LPA</div>
+            <div class="label">Average Package</div>
+        </div>
+        <div class="stat-card">
+            <div class="num">75%+</div>
+            <div class="label">Placement Rate</div>
+        </div>
+        <div class="stat-card">
+            <div class="num">50+</div>
+            <div class="label">Recruiting Companies</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🏢 Top Recruiters</div>
+        <div class="recruiter-grid">
+            <div class="recruiter-card">
+                <div class="r-icon">🔵</div>TCS
+            </div>
+            <div class="recruiter-card">
+                <div class="r-icon">🟠</div>Infosys
+            </div>
+            <div class="recruiter-card">
+                <div class="r-icon">🟣</div>Wipro
+            </div>
+            <div class="recruiter-card">
+                <div class="r-icon">🟡</div>Tech Mahindra
+            </div>
+            <div class="recruiter-card">
+                <div class="r-icon">🟢</div>Cognizant
+            </div>
+            <div class="recruiter-card">
+                <div class="r-icon">🔵</div>HCL Technologies
+            </div>
+            <div class="recruiter-card">
+                <div class="r-icon">🟠</div>Capgemini
+            </div>
+            <div class="recruiter-card">
+                <div class="r-icon">⚫</div>PSU Boards (BSNL, ONGC)
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🎯 Training & Skill Development</div>
+        <div class="training-list">
+            <div class="training-item">
+                <div class="t-icon">📊</div>
+                <div>
+                    <h3>Aptitude & Reasoning</h3>
+                    <p>Weekly workshops from 3rd year to sharpen quantitative and logical reasoning skills.</p>
+                </div>
+            </div>
+            <div class="training-item">
+                <div class="t-icon">💻</div>
+                <div>
+                    <h3>Technical Skill Sessions</h3>
+                    <p>Hands-on coding, DSA, and domain-specific training aligned with industry demands.</p>
+                </div>
+            </div>
+            <div class="training-item">
+                <div class="t-icon">🗣️</div>
+                <div>
+                    <h3>Communication & Soft Skills</h3>
+                    <p>Mock GDs, HR interview preparation, and presentation skills development.</p>
+                </div>
+            </div>
+            <div class="training-item">
+                <div class="t-icon">🤝</div>
+                <div>
+                    <h3>Industry Internships</h3>
+                    <p>Supervised internship programs with partner companies before final placements.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta">
+        <h2>Want to Know More?</h2>
+        <p>Ask our AI assistant about placement details, packages, and companies.</p>
+        <a href="/#chat" class="btn-primary">💬 Ask Enquiry Bot</a>
+    </div>
+</body>
+
+</html>

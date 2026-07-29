@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Life | JNTU-GV</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: #f0f6ff;
+            color: #1e293b;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topbar {
+            background: white;
+            box-shadow: 0 2px 16px rgba(59, 130, 246, 0.1);
+            padding: 1rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #e0eaff;
+        }
+
+        .topbar-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            padding: 0.55rem 1.3rem;
+            background: #EFF6FF;
+            color: #2563EB;
+            border: 1.5px solid #BFDBFE;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #DBEAFE;
+            border-color: #93C5FD;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #60A5FA 100%);
+            text-align: center;
+            padding: 5rem 5% 4rem;
+            color: white;
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(6px);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            color: #BFDBFE;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 3rem 5% 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .facility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .facility-card {
+            background: white;
+            border: 1.5px solid #DBEAFE;
+            border-radius: 18px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.35s ease;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.07);
+        }
+
+        .facility-card:hover {
+            transform: translateY(-6px);
+            border-color: #93C5FD;
+            box-shadow: 0 14px 32px rgba(37, 99, 235, 0.15);
+            background: #f0f6ff;
+        }
+
+        .facility-card .icon {
+            font-size: 2.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .facility-card h3 {
+            color: #1e3a8a;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+
+        .facility-card p {
+            color: #64748b;
+            font-size: 0.92rem;
+        }
+
+        .clubs-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .club-tag {
+            background: white;
+            border: 1.5px solid #BFDBFE;
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: #1d4ed8;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            cursor: default;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.06);
+        }
+
+        .club-tag:hover {
+            background: #EFF6FF;
+            border-color: #93C5FD;
+            transform: scale(1.03);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
+        }
+
+        .club-tag span {
+            font-size: 1.4rem;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 3.5rem 5%;
+            background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+            border-top: 2px solid #BFDBFE;
+            margin-top: 2rem;
+        }
+
+        .cta h2 {
+            font-size: 1.8rem;
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .cta p {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            padding: 0.9rem 2.5rem;
+            background: linear-gradient(135deg, #2563EB, #3B82F6);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.45);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="topbar">
+        <div class="topbar-logo">🏫 JNTU-GV</div>
+        <a href="/" class="btn-back">← Back to Home</a>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-badge">🌟 Campus Life 2026</div>
+        <h1>Life at <span>Jawaharlal Nehru Technological University Gurajada Vizianagaram (JNTU-GV)</span></h1>
+        <p>A sprawling campus packed with modern academic infrastructure, active student community, and vibrant events.
+        </p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🏗️ Campus Facilities</div>
+        <div class="facility-grid">
+            <div class="facility-card">
+                <div class="icon">📚</div>
+                <h3>Central Library</h3>
+                <p>Digitally enabled with thousands of academic books, international journals (Springer access), e-resources and quiet reading zones.</p>
+            </div>
+            <div class="facility-card">
+                <div class="icon">🔬</div>
+                <h3>Advanced Labs</h3>
+                <p>State-of-the-art programming, hardware, chemistry and electronics labs with high-speed internet and modern instrumentation.</p>
+            </div>
+            <div class="facility-card">
+                <div class="icon">🏈</div>
+                <h3>Sports Complex</h3>
+                <p>Volleyball courts, weightlifting facility, yoga center and inter-collegiate sports tournaments organized every year.</p>
+            </div>
+            <div class="facility-card">
+                <div class="icon">🏠</div>
+                <h3>Hostels</h3>
+                <p>Government-subsidized, secure and hygienic hostels with separate well-maintained blocks for boys and girls. Staff quarters also available.</p>
+            </div>
+            <div class="facility-card">
+                <div class="icon">🚌</div>
+                <h3>Transport</h3>
+                <p>APSRTC/RTC bus services connect the campus to Vizianagaram city and surrounding areas. Private bus facility also available.</p>
+            </div>
+            <div class="facility-card">
+                <div class="icon">🍽️</div>
+                <h3>Cafeteria</h3>
+                <p>Subsidized, hygienic food serving fresh meals daily. Separate mess facilities for hostel students with varied menu options.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">🎭 Clubs & Activities</div>
+        <div class="clubs-list">
+            <div class="club-tag"><span>💻</span> Coding Club</div>
+            <div class="club-tag"><span>🎵</span> Music Club</div>
+            <div class="club-tag"><span>🏈</span> Sports &amp; Fitness</div>
+            <div class="club-tag"><span>🤝</span> NSS Cell</div>
+            <div class="club-tag"><span>🌱</span> Student Activity Club</div>
+            <div class="club-tag"><span>📸</span> Photography Club</div>
+            <div class="club-tag"><span>🎨</span> Arts &amp; Crafts</div>
+            <div class="club-tag"><span>🚀</span> Incubation &amp; Startups</div>
+        </div>
+    </div>
+
+    <div class="cta">
+        <h2>Curious About Campus Life?</h2>
+        <p>Ask our AI assistant anything about facilities, events, or student activities.</p>
+        <a href="/#chat" class="btn-primary">💬 Ask Enquiry Bot</a>
+    </div>
+</body>
+
+</html>

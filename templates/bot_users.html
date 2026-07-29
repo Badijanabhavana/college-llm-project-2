@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Users | JNTU-GV</title>
+    <link rel="stylesheet" href="/static/student.css">
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">JNTU-GV Enquiry</span>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/admin" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">Admin Dashboard</span></a>
+            <a href="/home" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Home</span></a><span class="menu-icon">👥</span><span class="menu-text">Bot Users</span></a>
+            <a href="/unanswered" class="menu-item"><span class="menu-icon">❓</span><span class="menu-text">Unanswered Questions</span></a>
+            <a href="/admin/chat_history" class="menu-item"><span class="menu-icon">💬</span><span class="menu-text">Chat History</span></a>
+            <a href="/admin/feedback" class="menu-item"><span class="menu-icon">⭐</span><span class="menu-text">Feedback</span></a>
+            <a href="/logout" class="menu-item" style="margin-top: auto;"><span class="menu-icon">🚪</span><span class="menu-text">Logout</span></a>
+        </nav>
+    </aside>
+
+    <main class="main-container">
+        <nav class="page-topbar">
+            <div class="topbar-logo">🎓 JNTU-GV</div>
+        </nav>
+
+        <div class="page-wrapper">
+            <div class="page-heading">
+                <h1>👥 Registered Bot Users</h1>
+                <p>Manage and view all students currently registered to use the Enquiry System.</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email Address</th>
+                        <th>Mobile Number</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <tr><td colspan="5" class="empty-state">Loading users…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const currentUser = "{{ current_user }}";
+
+        async function fetchUsers() {
+            try {
+                const res = await fetch('/api/users');
+                const users = await res.json();
+                const tbody = document.getElementById('users-tbody');
+
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No users found in the system.</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                users.forEach(user => {
+                    let actionBtn = '';
+                    if (user.username === currentUser) {
+                        actionBtn = `<span class="tbl-badge" style="background:#F1F5F9;color:#64748B;">Admin (You)</span>`;
+                    } else {
+                        actionBtn = `<button class="btn-delete" onclick="deleteUser('${user.username}')">Delete</button>`;
+                    }
+                    html += `<tr>
+                        <td style="font-weight:600;color:var(--primary-dark);">@${user.username}</td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td>${user.mobile || 'N/A'}</td>
+                        <td><span class="tbl-badge">Active</span></td>
+                        <td>${actionBtn}</td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+            } catch (e) {
+                console.error("Error fetching users:", e);
+            }
+        }
+
+        async function deleteUser(username) {
+            if (confirm(`Are you sure you want to delete @${username}? This cannot be undone.`)) {
+                try {
+                    const res = await fetch('/api/delete_user', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username })
+                    });
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        fetchUsers();
+                    } else {
+                        alert(data.msg || "Failed to delete user.");
+                    }
+                } catch (e) {
+                    console.error("Error deleting user:", e);
+                    alert("An error occurred while deleting the user.");
+                }
+            }
+        }
+
+        fetchUsers();
+        setInterval(fetchUsers, 5000);
+    </script>
+</body>
+</html>

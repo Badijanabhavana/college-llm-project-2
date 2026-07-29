@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | JNTU-GV College Enquiry System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ── Full-page blurred campus background ── */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background image layer */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                url('/static/images/campus.jpg') center center / cover no-repeat,
+                linear-gradient(135deg, #1E3A8A 0%, #2563EB 60%, #93C5FD 100%);
+            filter: blur(5px) brightness(0.72);
+            transform: scale(1.05); /* prevents blur edge bleeding */
+            z-index: 0;
+        }
+
+        /* Soft white overlay on top of blurred bg */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.18);
+            z-index: 1;
+        }
+
+        /* ── Card ── */
+        .auth-card {
+            position: relative;
+            z-index: 2;
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 20px;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.06),
+                0 12px 48px rgba(0,0,0,0.22);
+            overflow: hidden;
+        }
+
+        /* ── Card top: logo block ── */
+        .card-top {
+            padding: 2rem 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #EFF6FF;
+        }
+
+        .logo-mark {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 6px 18px rgba(37,99,235,0.30);
+        }
+
+        .card-top .college-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1E3A8A;
+            line-height: 1.3;
+            letter-spacing: 0.01em;
+        }
+
+        .card-top .college-location {
+            font-size: 0.82rem;
+            color: #64748B;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .card-top .tagline {
+            display: inline-block;
+            margin-top: 0.65rem;
+            font-size: 0.78rem;
+            color: #2563EB;
+            font-weight: 500;
+            background: #EFF6FF;
+            border-radius: 20px;
+            padding: 3px 12px;
+            letter-spacing: 0.01em;
+        }
+
+        /* ── Card body: form ── */
+        .card-body {
+            padding: 1.6rem 2rem 1.8rem;
+        }
+
+        /* ── Alerts ── */
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            border-radius: 9px;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.84rem;
+            margin-bottom: 1.1rem;
+            line-height: 1.45;
+        }
+        .alert svg { flex-shrink: 0; margin-top: 1px; }
+        .alert-error   { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+        .alert-success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+
+        /* ── Fields ── */
+        .field { margin-bottom: 1rem; }
+
+        .field label {
+            display: block;
+            font-size: 0.79rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.35rem;
+            letter-spacing: 0.01em;
+        }
+
+        .input-wrap { position: relative; }
+
+        .input-wrap .fi {
+            position: absolute;
+            left: 0.82rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #93C5FD;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 0.7rem 2.5rem 0.7rem 2.45rem;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            color: #0F172A;
+            background: #F8FAFC;
+            outline: none;
+            transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+            font-family: inherit;
+        }
+        .input-wrap input::placeholder { color: #94A3B8; font-size: 0.88rem; }
+        .input-wrap input:focus {
+            border-color: #2563EB;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+        }
+
+        /* eye toggle */
+        .eye-btn {
+            position: absolute;
+            right: 0.72rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+            color: #94A3B8;
+            display: flex;
+            align-items: center;
+            transition: color 0.18s;
+        }
+        .eye-btn:hover { color: #2563EB; }
+
+        /* ── Login button ── */
+        .btn-login {
+            width: 100%;
+            padding: 0.78rem;
+            margin-top: 0.5rem;
+            border: none;
+            border-radius: 10px;
+            background: #1E3A8A;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            cursor: pointer;
+            transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+            box-shadow: 0 4px 14px rgba(30,58,138,0.30);
+            font-family: inherit;
+        }
+        .btn-login:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(30,58,138,0.38);
+        }
+        .btn-login:active {
+            transform: translateY(0);
+            background: #1E3A8A;
+        }
+
+        /* ── Footer links ── */
+        .card-footer {
+            border-top: 1px solid #F1F5F9;
+            padding: 0.9rem 2rem 1.3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
+        }
+        .card-footer p {
+            font-size: 0.83rem;
+            color: #64748B;
+        }
+        .card-footer a {
+            color: #2563EB;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .card-footer a:hover {
+            color: #1D4ED8;
+            text-decoration: underline;
+        }
+        .footer-sep {
+            border: none;
+            border-top: 1px solid #F1F5F9;
+            margin: 0.15rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+
+        <!-- Logo / branding block -->
+        <div class="card-top">
+            <div class="logo-mark">🎓</div>
+            <div class="college-name">JNTU-GV College of Engineering</div>
+            <div class="college-location">Vizianagaram</div>
+            <span class="tagline">✦ AI-powered College Enquiry Assistant</span>
+        </div>
+
+        <!-- Form -->
+        <div class="card-body">
+
+            {% if error %}
+            <div class="alert alert-error">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            {% if msg %}
+            <div class="alert alert-success">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                {{ msg }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/login">
+
+                <div class="field">
+                    <label for="username">Username</label>
+                    <div class="input-wrap">
+                        <span class="fi">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </span>
+                        <input type="text" id="username" name="username"
+                               placeholder="Enter your username"
+                               required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <span class="fi">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                        </span>
+                        <input type="password" id="password" name="password"
+                               placeholder="Enter your password"
+                               required autocomplete="current-password">
+                        <button type="button" class="eye-btn" id="eye-btn" aria-label="Show password">
+                            <svg id="ico-eye" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg id="ico-eye-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                                <line x1="1" y1="1" x2="23" y2="23"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">Login</button>
+
+            </form>
+        </div>
+
+        <!-- Footer links -->
+        <div class="card-footer">
+            <p>Admin? <a href="/admin_login">Go to Admin Login</a></p>
+            <hr class="footer-sep">
+            <p>Don't have an account? <a href="/register">Register here</a></p>
+        </div>
+
+    </div>
+
+    <script>
+        const eyeBtn = document.getElementById('eye-btn');
+        const pwdFld = document.getElementById('password');
+        const icoOn  = document.getElementById('ico-eye');
+        const icoOff = document.getElementById('ico-eye-off');
+
+        eyeBtn.addEventListener('click', () => {
+            const show = pwdFld.type === 'password';
+            pwdFld.type          = show ? 'text'    : 'password';
+            icoOn.style.display  = show ? 'none'    : '';
+            icoOff.style.display = show ? ''        : 'none';
+            eyeBtn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        });
+    </script>
+
+</body>
+</html>

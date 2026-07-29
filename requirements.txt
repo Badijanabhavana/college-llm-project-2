@@ -1,0 +1,10 @@
+flask
+requests
+gunicorn
+python-dotenv
+sentence-transformers
+faiss-cpu
+numpy
+beautifulsoup4
+pdfplumber
+PyPDF2

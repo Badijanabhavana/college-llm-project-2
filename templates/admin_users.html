@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users | JNTU-GV Admin</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="/admin" class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-text">
+                    <div class="b-name">JNTU-GV</div>
+                    <div class="b-role">Admin Panel</div>
+                </div>
+            </a>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="nav-label">Main</div>
+            <a href="/admin" class="menu-item">
+                <span class="menu-icon">📊</span><span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="menu-item active">
+                <span class="menu-icon">👥</span><span>Users</span>
+            </a>
+            <div class="nav-label">Activity</div>
+            <a href="/admin/chat_history" class="menu-item">
+                <span class="menu-icon">💬</span><span>Chat History</span>
+            </a>
+            <a href="/admin/feedback" class="menu-item">
+                <span class="menu-icon">⭐</span><span>Feedback</span>
+            </a>
+            <a href="/admin/unanswered" class="menu-item">
+                <span class="menu-icon">❓</span><span>Unanswered Questions</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout" class="menu-item">
+                <span class="menu-icon">🚪</span><span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div>
+                <div class="topbar-title">Manage Users</div>
+                <div class="topbar-meta">JNTU-GV College Enquiry System</div>
+            </div>
+            <div class="topbar-right">
+                <div class="admin-pill">
+                    <div class="admin-avatar">{{ current_user[0]|upper }}</div>
+                    {{ current_user }}
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-heading">
+                <h1>Registered Users</h1>
+                <p>View and manage all student accounts in the system.</p>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-toolbar">
+                    <span class="card-toolbar-title">
+                        All Users
+                        <span class="count-pill" id="user-count">—</span>
+                    </span>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email Address</th>
+                            <th>Mobile Number</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr><td colspan="5" class="empty-state">Loading users…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = "{{ current_user }}";
+
+        async function fetchUsers() {
+            try {
+                const res = await fetch('/api/users');
+                const users = await res.json();
+                const tbody = document.getElementById('users-tbody');
+                const countPill = document.getElementById('user-count');
+                countPill.textContent = users.length;
+
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No users found in the system.</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                users.forEach(user => {
+                    const initial = user.username.charAt(0).toUpperCase();
+                    let actionCell = '';
+                    if (user.username === currentUser) {
+                        actionCell = `<span class="badge badge-slate">Admin (You)</span>`;
+                    } else {
+                        actionCell = `<button class="btn-delete" onclick="deleteUser('${user.username}')">Delete</button>`;
+                    }
+                    html += `<tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="u-avatar">${initial}</div>
+                                <span class="user-name">@${user.username}</span>
+                            </div>
+                        </td>
+                        <td>${user.email || '—'}</td>
+                        <td>${user.mobile || '—'}</td>
+                        <td><span class="badge badge-active">● Active</span></td>
+                        <td>${actionCell}</td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+            } catch (e) {
+                console.error("Error fetching users:", e);
+            }
+        }
+
+        async function deleteUser(username) {
+            if (confirm(`Are you sure you want to delete @${username}? This cannot be undone.`)) {
+                try {
+                    const res = await fetch('/api/delete_user', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username })
+                    });
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        fetchUsers();
+                    } else {
+                        alert(data.msg || "Failed to delete user.");
+                    }
+                } catch (e) {
+                    console.error("Error deleting user:", e);
+                    alert("An error occurred while deleting the user.");
+                }
+            }
+        }
+
+        fetchUsers();
+        setInterval(fetchUsers, 5000);
+    </script>
+</body>
+</html>
